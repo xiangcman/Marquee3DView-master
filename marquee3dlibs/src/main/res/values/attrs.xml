@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Marquee3DView">
+        <attr name="direction" format="enum">
+            <enum name="U2D" value="2" />
+            <enum name="D2U" value="1" />
+        </attr>
+        <attr name="highlight_position" format="integer" />
+        <attr name="back_color" format="color" />
+    </declare-styleable>
+</resources>
