@@ -1,5 +1,4 @@
-# Marquee3DView-master
-一款不错的3D版翻页公告
+# 一款不错的3D版翻页公告
 
 [ ![Download](https://api.bintray.com/packages/a1002326270/maven/marquee3dlibs/images/download.svg) ](https://bintray.com/a1002326270/maven/marquee3dlibs/_latestVersion)
 
