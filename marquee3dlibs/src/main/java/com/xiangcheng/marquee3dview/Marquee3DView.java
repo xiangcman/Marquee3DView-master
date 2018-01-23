@@ -71,8 +71,19 @@ public class Marquee3DView extends View {
 
     private int backColor;
 
+    private int rotateDuration = 1000;
+
+    private int showDuration = 1000;
+
+    private int highLightColor;
+
+    private ShowItemRunable showItemRunable;
+
     public void setMarqueeLabels(List<String> marqueeLabels) {
         this.marqueeLabels = marqueeLabels;
+        if (highLightPosition >= this.marqueeLabels.size()) {
+            highLightPosition = this.marqueeLabels.size() - 1;
+        }
         rotateAnimator.start();
     }
 
@@ -97,6 +108,10 @@ public class Marquee3DView extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Marquee3DView);
         backColor = typedArray.getColor(R.styleable.Marquee3DView_back_color, Color.parseColor("#cccccc"));
         direction = typedArray.getInt(R.styleable.Marquee3DView_direction, D2U);
+        highLightPosition = typedArray.getInt(R.styleable.Marquee3DView_highlight_position, highLightPosition);
+        highLightColor = typedArray.getColor(R.styleable.Marquee3DView_highlight_color, Color.parseColor("#FF1493"));
+        rotateDuration = typedArray.getInt(R.styleable.Marquee3DView_rotate_duration, rotateDuration);
+        showDuration = typedArray.getInt(R.styleable.Marquee3DView_show_duration, showDuration);
     }
 
     private void initialize() {
@@ -118,21 +133,22 @@ public class Marquee3DView extends View {
         nextPaint.setTextAlign(Paint.Align.CENTER);
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaint.setColor(Color.parseColor("#FF1493"));
+        linePaint.setColor(highLightColor);
         linePaint.setStrokeWidth(dp2px(1));
         linePaint.setStyle(Paint.Style.FILL);
 
         highLightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         highLightPaint.setTextSize(sp2px(15));
-        highLightPaint.setColor(Color.parseColor("#FF1493"));
+        highLightPaint.setColor(highLightColor);
         highLightPaint.setTextAlign(Paint.Align.CENTER);
 
         textRegion = new Region();
     }
 
     private void initAnimation() {
+        showItemRunable = new ShowItemRunable();
         rotateAnimator = ValueAnimator.ofFloat(0, 90);
-        rotateAnimator.setDuration(1500);
+        rotateAnimator.setDuration(rotateDuration);
         rotateAnimator.setInterpolator(new LinearInterpolator());
         rotateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -151,18 +167,21 @@ public class Marquee3DView extends View {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 isRunning = false;
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentItem++;
-                        if (currentItem >= marqueeLabels.size()) {
-                            currentItem = 0;
-                        }
-                        rotateAnimator.start();
-                    }
-                }, 1000);
+                postDelayed(showItemRunable, 1000);
             }
         });
+    }
+
+    private class ShowItemRunable implements Runnable {
+
+        @Override
+        public void run() {
+            currentItem++;
+            if (currentItem >= marqueeLabels.size()) {
+                currentItem = 0;
+            }
+            rotateAnimator.start();
+        }
     }
 
     @Override
@@ -350,6 +369,9 @@ public class Marquee3DView extends View {
         super.onDetachedFromWindow();
         if (rotateAnimator != null && rotateAnimator.isRunning()) {
             rotateAnimator.end();
+        }
+        if (showItemRunable != null) {
+            removeCallbacks(showItemRunable);
         }
     }
 }
