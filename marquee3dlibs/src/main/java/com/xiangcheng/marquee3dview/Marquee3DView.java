@@ -84,7 +84,6 @@ public class Marquee3DView extends View {
         if (highLightPosition >= this.marqueeLabels.size()) {
             highLightPosition = this.marqueeLabels.size() - 1;
         }
-        rotateAnimator.start();
     }
 
     private List<String> marqueeLabels = new ArrayList<>();
@@ -101,7 +100,6 @@ public class Marquee3DView extends View {
         super(context, attrs, defStyleAttr);
         initArgus(context, attrs);
         initialize();
-
     }
 
     private void initArgus(Context context, AttributeSet attrs) {
@@ -167,9 +165,22 @@ public class Marquee3DView extends View {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 isRunning = false;
-                postDelayed(showItemRunable, 1000);
+                postDelayed(showItemRunable, showDuration);
             }
         });
+        startRunable = new StartRunable();
+        postDelayed(startRunable, showDuration);
+    }
+
+    private StartRunable startRunable;
+
+    private class StartRunable implements Runnable {
+
+        @Override
+        public void run() {
+            hasStart = true;
+            rotateAnimator.start();
+        }
     }
 
     private class ShowItemRunable implements Runnable {
@@ -320,12 +331,6 @@ public class Marquee3DView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-    }
-
-    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         Log.d("TAG", "onSizeChanged");
@@ -333,6 +338,8 @@ public class Marquee3DView extends View {
         height = h;
         initAnimation();
     }
+
+    private boolean hasStart;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -347,7 +354,10 @@ public class Marquee3DView extends View {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (textRegion.contains((int) event.getX(), (int) event.getY())) {
                 if (onWhereItemClick != null) {
-                    onWhereItemClick.onItemClick(nextItem);
+                    if (!hasStart)
+                        onWhereItemClick.onItemClick(currentItem);
+                    else
+                        onWhereItemClick.onItemClick(nextItem);
                 }
             }
         }
@@ -372,6 +382,9 @@ public class Marquee3DView extends View {
         }
         if (showItemRunable != null) {
             removeCallbacks(showItemRunable);
+        }
+        if (startRunable != null) {
+            removeCallbacks(startRunable);
         }
     }
 }

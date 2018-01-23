@@ -2,7 +2,6 @@ package com.single.marquee3dview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.xiangcheng.marquee3dview.Marquee3DView;
@@ -28,30 +27,18 @@ public class MainActivity extends AppCompatActivity {
         labels1.add("汗滴禾下土.");
         labels1.add("谁知盘中餐,");
         labels1.add("粒粒皆辛苦.");
-        marquee3DView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        marquee3DView.setMarqueeLabels(labels);
+        marquee3DView.setOnWhereItemClick(new Marquee3DView.OnWhereItemClick() {
             @Override
-            public void onGlobalLayout() {
-                marquee3DView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                marquee3DView.setMarqueeLabels(labels);
-                marquee3DView.setOnWhereItemClick(new Marquee3DView.OnWhereItemClick() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Toast.makeText(MainActivity.this, labels.get(position), Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onItemClick(int position) {
+                Toast.makeText(MainActivity.this, labels.get(position), Toast.LENGTH_SHORT).show();
             }
         });
-        marquee3DView2.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        marquee3DView2.setMarqueeLabels(labels1);
+        marquee3DView2.setOnWhereItemClick(new Marquee3DView.OnWhereItemClick() {
             @Override
-            public void onGlobalLayout() {
-                marquee3DView2.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                marquee3DView2.setMarqueeLabels(labels1);
-                marquee3DView2.setOnWhereItemClick(new Marquee3DView.OnWhereItemClick() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Toast.makeText(MainActivity.this, labels1.get(position), Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onItemClick(int position) {
+                Toast.makeText(MainActivity.this, labels1.get(position), Toast.LENGTH_SHORT).show();
             }
         });
     }
