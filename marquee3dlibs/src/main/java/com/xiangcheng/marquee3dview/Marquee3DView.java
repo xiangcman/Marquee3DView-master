@@ -83,7 +83,7 @@ public class Marquee3DView extends View {
 
     private int labelColor;
 
-    private Bitmap labelBitmap;
+    private List<Bitmap> labelBitmap;
 
     private int labelBitmapRadius;
 
@@ -93,18 +93,20 @@ public class Marquee3DView extends View {
 
     private float labelTextStart;
 
-    public void setLabelBitmap(Bitmap labelBitmap) {
+    public void setLabelBitmap(List<Bitmap> labelBitmap) {
         this.labelBitmap = labelBitmap;
         caculateLabelBitmap();
     }
 
     private void caculateLabelBitmap() {
-        int size = Math.min(labelBitmap.getWidth(), labelBitmap.getHeight());
-        float scale = (float) (labelBitmapRadius * 2.0 / size);
-        Matrix matrix = new Matrix();
-        //需要对图片进行缩放
-        matrix.setScale(scale, scale);
-        labelBitmap = Bitmap.createBitmap(labelBitmap, 0, 0, labelBitmap.getWidth(), labelBitmap.getHeight(), matrix, true);
+        for (int i = 0; i < labelBitmap.size(); i++) {
+            int size = Math.min(labelBitmap.get(i).getWidth(), labelBitmap.get(i).getHeight());
+            float scale = (float) (labelBitmapRadius * 2.0 / size);
+            Matrix matrix = new Matrix();
+            //需要对图片进行缩放
+            matrix.setScale(scale, scale);
+            labelBitmap.set(i, Bitmap.createBitmap(labelBitmap.get(i), 0, 0, labelBitmap.get(i).getWidth(), labelBitmap.get(i).getHeight(), matrix, true));
+        }
     }
 
     public void setMarqueeLabels(List<String> marqueeLabels) {
@@ -295,8 +297,8 @@ public class Marquee3DView extends View {
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(backColor);
 
-        if (labelBitmap != null) {
-            drawLabelBitmap(canvas);
+        if (labelBitmap != null && labelBitmap.size() > 0) {
+            drawLabelBitmap(canvas, position);
         }
         Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
         float allHeight = fontMetrics.descent - fontMetrics.ascent;
@@ -337,13 +339,13 @@ public class Marquee3DView extends View {
         return bitmap;
     }
 
-    private void drawLabelBitmap(Canvas canvas) {
+    private void drawLabelBitmap(Canvas canvas, int position) {
         int layer = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
         //在xfmode之前画的是dst
         canvas.drawCircle(labelBitmapRadius, height / 2, labelBitmapRadius, mBitmapPaint);
         //该mode下取两部分的交集部分
         mBitmapPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(labelBitmap, 0, height / 2 - labelBitmapRadius, mBitmapPaint);
+        canvas.drawBitmap(labelBitmap.get(position), 0, height / 2 - labelBitmapRadius, mBitmapPaint);
         mBitmapPaint.setXfermode(null);
         canvas.restoreToCount(layer);
         labelTextStart = labelBitmapRadius * 2 + labelBitmapTextOffset;

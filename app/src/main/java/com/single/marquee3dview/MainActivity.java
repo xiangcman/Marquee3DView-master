@@ -1,5 +1,6 @@
 package com.single.marquee3dview;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,13 @@ public class MainActivity extends AppCompatActivity {
         labels1.add("小美用户获得一张旅游机票,");
         labels1.add("新款昂克赛拉今年中旬上市.");
         marquee3DView.setMarqueeLabels(labels);
-        marquee3DView2.setLabelBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.timg));
+        List<Bitmap> labelBitmapList = new ArrayList<>();
+        labelBitmapList.add(BitmapFactory.decodeResource(getResources(), R.mipmap.timg));
+        labelBitmapList.add(BitmapFactory.decodeResource(getResources(), R.mipmap.default_avatar_img));
+        labelBitmapList.add(BitmapFactory.decodeResource(getResources(), R.mipmap.single));
+        labelBitmapList.add(BitmapFactory.decodeResource(getResources(), R.mipmap.timg));
+        labelBitmapList.add(BitmapFactory.decodeResource(getResources(), R.mipmap.default_avatar_img));
+        marquee3DView2.setLabelBitmap(labelBitmapList);
         marquee3DView.setOnWhereItemClick(new Marquee3DView.OnWhereItemClick() {
             @Override
             public void onItemClick(int position) {
