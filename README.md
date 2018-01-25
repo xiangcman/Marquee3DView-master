@@ -115,7 +115,7 @@ compile 'com.xiangcheng:marquee3dlibs:1.0.1'
 <dependency>
   <groupId>com.xiangcheng</groupId>
   <artifactId>marquee3dlibs</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <type>pom</type>
 </dependency>
 ```
