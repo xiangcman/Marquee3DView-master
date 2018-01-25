@@ -24,6 +24,8 @@ compile 'com.xiangcheng:marquee3dlibs:1.0'
 
 **欢迎大家提出问题，留言板留言或邮箱直接联系我。我会第一时间测试相关的bug**
 
+**如果你有更好的效果，或是想修改效果，请与作者联系，谢谢!!!**
+
 **欢迎客官到本店光临(qq群):**
 
 <image src="https://github.com/1002326270xc/LayoutManager-FlowLayout/blob/master/photos/IMG_0221.jpg" width="250" width="250" title="qq群"/>
