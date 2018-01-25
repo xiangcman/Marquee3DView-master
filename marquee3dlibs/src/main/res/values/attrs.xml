@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Marquee3DView">
+        <!--指定旋转的方向-->
         <attr name="direction" format="enum">
+            <!--从上到下-->
             <enum name="U2D" value="2" />
+            <!--从下到上-->
             <enum name="D2U" value="1" />
         </attr>
+        <!--高亮的item位置-->
         <attr name="highlight_position" format="integer" />
+        <!--item的颜色-->
         <attr name="back_color" format="color" />
+        <!--高亮的文字、下划线颜色-->
         <attr name="highlight_color" format="color" />
+        <!--3D旋转的时间-->
         <attr name="rotate_duration" format="integer" />
+        <!--停留显示的时间-->
         <attr name="show_duration" format="integer" />
+        <!--右边文字的颜色-->
+        <attr name="label_text_color" format="color" />
+        <!--右边文字的大小-->
+        <attr name="label_text_size" format="dimension" />
+        <!--指定左边图片的半径-->
+        <attr name="label_bitmap_radius" format="dimension" />
+        <!--bitmap和text之间的间距-->
+        <attr name="label_bitmap_text_offset" format="dimension" />
     </declare-styleable>
 </resources>
