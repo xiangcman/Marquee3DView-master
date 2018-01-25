@@ -1,7 +1,6 @@
 # 一款不错的3D版翻页公告
 
-[ ![Download](https://api.bintray.com/packages/a1002326270/maven/marquee3dlibs/images/download.svg) ](https://bintray.com/a1002326270/maven/marquee3dlibs/_latestVersion)
-
+[ ![Download](https://api.bintray.com/packages/a1002326270/maven/marquee3dlibs/images/download.svg?version=1.0.1) ](https://bintray.com/a1002326270/maven/marquee3dlibs/1.0.1/link)
 <img src="https://github.com/xiangcman/Marquee3DView-master/blob/master/photos/simple.gif" width="250"/>
 
 ### xml:
@@ -10,14 +9,14 @@
 
 ### gradle:
 ```
-compile 'com.xiangcheng:marquee3dlibs:1.0'
+compile 'com.xiangcheng:marquee3dlibs:1.0.1'
 ```
 ### maven:
 ```
 <dependency>
   <groupId>com.xiangcheng</groupId>
   <artifactId>marquee3dlibs</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <type>pom</type>
 </dependency>
 ```
