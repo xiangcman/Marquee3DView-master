@@ -11,6 +11,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.support.annotation.Nullable;
@@ -79,6 +81,32 @@ public class Marquee3DView extends View {
 
     private ShowItemRunable showItemRunable;
 
+    private int labelColor;
+
+    private Bitmap labelBitmap;
+
+    private int labelBitmapRadius;
+
+    private Paint mBitmapPaint;
+
+    private int labelBitmapTextOffset;
+
+    private float labelTextStart;
+
+    public void setLabelBitmap(Bitmap labelBitmap) {
+        this.labelBitmap = labelBitmap;
+        caculateLabelBitmap();
+    }
+
+    private void caculateLabelBitmap() {
+        int size = Math.min(labelBitmap.getWidth(), labelBitmap.getHeight());
+        float scale = (float) (labelBitmapRadius * 2.0 / size);
+        Matrix matrix = new Matrix();
+        //需要对图片进行缩放
+        matrix.setScale(scale, scale);
+        labelBitmap = Bitmap.createBitmap(labelBitmap, 0, 0, labelBitmap.getWidth(), labelBitmap.getHeight(), matrix, true);
+    }
+
     public void setMarqueeLabels(List<String> marqueeLabels) {
         this.marqueeLabels = marqueeLabels;
         if (highLightPosition >= this.marqueeLabels.size()) {
@@ -110,6 +138,7 @@ public class Marquee3DView extends View {
         highLightColor = typedArray.getColor(R.styleable.Marquee3DView_highlight_color, Color.parseColor("#FF1493"));
         rotateDuration = typedArray.getInt(R.styleable.Marquee3DView_rotate_duration, rotateDuration);
         showDuration = typedArray.getInt(R.styleable.Marquee3DView_show_duration, showDuration);
+        labelColor = Color.parseColor("#778899");
     }
 
     private void initialize() {
@@ -117,18 +146,18 @@ public class Marquee3DView extends View {
         matrix = new Matrix();
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(sp2px(15));
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setColor(labelColor);
+//        textPaint.setTextAlign(Paint.Align.CENTER);
 
         currentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         currentPaint.setTextSize(sp2px(15));
-        currentPaint.setColor(Color.BLACK);
-        currentPaint.setTextAlign(Paint.Align.CENTER);
+        currentPaint.setColor(labelColor);
+//        currentPaint.setTextAlign(Paint.Align.CENTER);
 
         nextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         nextPaint.setTextSize(sp2px(15));
-        nextPaint.setColor(Color.BLACK);
-        nextPaint.setTextAlign(Paint.Align.CENTER);
+        nextPaint.setColor(labelColor);
+//        nextPaint.setTextAlign(Paint.Align.CENTER);
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         linePaint.setColor(highLightColor);
@@ -138,9 +167,16 @@ public class Marquee3DView extends View {
         highLightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         highLightPaint.setTextSize(sp2px(15));
         highLightPaint.setColor(highLightColor);
-        highLightPaint.setTextAlign(Paint.Align.CENTER);
+//        highLightPaint.setTextAlign(Paint.Align.CENTER);
 
         textRegion = new Region();
+
+        labelBitmapRadius = dp2px(10);
+        labelBitmapTextOffset = dp2px(10);
+
+        mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBitmapPaint.setColor(Color.WHITE);
+        mBitmapPaint.setStrokeWidth(0);
     }
 
     private void initAnimation() {
@@ -258,35 +294,59 @@ public class Marquee3DView extends View {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(backColor);
+
+        if (labelBitmap != null) {
+            drawLabelBitmap(canvas);
+        }
         Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
         float allHeight = fontMetrics.descent - fontMetrics.ascent;
         float textWidth = textPaint.measureText(marqueeLabels.get(position));
         Rect rect = new Rect();
-        rect.left = (int) (width * 1.0 / 2 - textWidth / 2);
-        rect.right = (int) (width * 1.0 / 2 + textWidth / 2);
+        rect.left = (int) labelTextStart;
+        rect.right = (int) (labelTextStart + textWidth);
         rect.top = (int) (height / 2 - allHeight / 2);
         rect.bottom = (int) (height / 2 + allHeight / 2);
         textRegion.set(rect);
         if (isNext) {
             if (highLightPosition == position) {
                 caculateHighLightPaint(changeRotate, true);
-                canvas.drawText(marqueeLabels.get(position), width / 2, height / 2 - allHeight / 2 - fontMetrics.ascent, highLightPaint);
-                canvas.drawLine((float) (width * 1.0 / 2 - textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2),
-                        (float) (width * 1.0 / 2 + textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
+                canvas.drawText(marqueeLabels.get(position), labelTextStart, height / 2 - allHeight / 2 - fontMetrics.ascent, highLightPaint);
+//                canvas.drawText(marqueeLabels.get(position), 0, height / 2 - allHeight / 2, highLightPaint);
+//                canvas.drawLine((float) (width * 1.0 / 2 - textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2),
+//                        (float) (width * 1.0 / 2 + textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
+                canvas.drawLine(labelTextStart, (float) (height * 1.0 / 2 + allHeight / 2),
+                        labelTextStart + textWidth, (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
             } else {
-                canvas.drawText(marqueeLabels.get(position), width / 2, height / 2 - allHeight / 2 - fontMetrics.ascent, nextPaint);
+                canvas.drawText(marqueeLabels.get(position), labelTextStart, height / 2 - allHeight / 2 - fontMetrics.ascent, nextPaint);
+//                canvas.drawText(marqueeLabels.get(position), 0, height / 2 - allHeight / 2, nextPaint);
             }
         } else {
             if (highLightPosition == position) {
                 caculateHighLightPaint(changeRotate, false);
-                canvas.drawText(marqueeLabels.get(position), width / 2, height / 2 - allHeight / 2 - fontMetrics.ascent, highLightPaint);
-                canvas.drawLine((float) (width * 1.0 / 2 - textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2),
-                        (float) (width * 1.0 / 2 + textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
+                canvas.drawText(marqueeLabels.get(position), labelTextStart, height / 2 - allHeight / 2 - fontMetrics.ascent, highLightPaint);
+//                canvas.drawText(marqueeLabels.get(position), 0, height / 2 - allHeight / 2, highLightPaint);
+//                canvas.drawLine((float) (width * 1.0 / 2 - textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2),
+//                        (float) (width * 1.0 / 2 + textWidth / 2), (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
+                canvas.drawLine(labelTextStart, (float) (height * 1.0 / 2 + allHeight / 2),
+                        labelTextStart + textWidth, (float) (height * 1.0 / 2 + allHeight / 2), linePaint);
             } else {
-                canvas.drawText(marqueeLabels.get(position), width / 2, height / 2 - allHeight / 2 - fontMetrics.ascent, currentPaint);
+                canvas.drawText(marqueeLabels.get(position), labelTextStart, height / 2 - allHeight / 2 - fontMetrics.ascent, currentPaint);
+//                canvas.drawText(marqueeLabels.get(position), 0, height / 2 - allHeight / 2, currentPaint);
             }
         }
         return bitmap;
+    }
+
+    private void drawLabelBitmap(Canvas canvas) {
+        int layer = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
+        //在xfmode之前画的是dst
+        canvas.drawCircle(labelBitmapRadius, height / 2, labelBitmapRadius, mBitmapPaint);
+        //该mode下取两部分的交集部分
+        mBitmapPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(labelBitmap, 0, height / 2 - labelBitmapRadius, mBitmapPaint);
+        mBitmapPaint.setXfermode(null);
+        canvas.restoreToCount(layer);
+        labelTextStart = labelBitmapRadius * 2 + labelBitmapTextOffset;
     }
 
     private void caculateHighLightPaint(float rotate, boolean isNext) {

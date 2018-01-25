@@ -9,8 +9,8 @@
 
     <com.xiangcheng.marquee3dview.Marquee3DView
         android:id="@+id/marquee3DView"
-        android:layout_width="230dp"
-        android:layout_height="58dp"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -21,21 +21,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.xiangcheng.marquee3dview.Marquee3DView
-        android:id="@+id/marquee3DView2"
-        android:layout_width="230dp"
-        android:layout_height="58dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:back_color="#00BFFF"
-        app:direction="U2D"
-        app:highlight_color="#FF0000"
-        app:highlight_position="3"
-        app:rotate_duration="1500"
-        app:show_duration="1500"
+        android:background="#FFC0CB"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/marquee3DView"
         app:layout_constraintStart_toStartOf="@+id/marquee3DView"
-        app:layout_constraintTop_toBottomOf="@+id/marquee3DView" />
+        app:layout_constraintTop_toBottomOf="@+id/marquee3DView">
+
+        <com.xiangcheng.marquee3dview.Marquee3DView
+            android:id="@+id/marquee3DView2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            app:back_color="#00ffffff"
+            app:direction="U2D"
+            app:highlight_color="#FF6347"
+            app:highlight_position="3"
+            app:rotate_duration="1500"
+            app:show_duration="1500" />
+
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
